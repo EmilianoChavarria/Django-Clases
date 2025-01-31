@@ -4,12 +4,53 @@ from .models import CustomUser
 
 #primer formulario
 class CustomUserCreationForm(UserCreationForm):
+    tel = forms.CharField(
+        label='Teléfono',
+        widget = forms.TextInput(
+            attrs = {
+                'class': 'form-input',
+                # 'pattern': '^$',
+                'minlength':10,
+                'maxlength':10,
+                'placeholder': 'Ingrese su telefono',
+                'title': 'Necesitas definir una contraseña segura',
+                'required': True
+            }
+        )
+    )
+    control_number = forms.CharField(
+        label='Matricula',
+        widget = forms.TextInput(
+            attrs = {
+                'class': 'form-input',
+                # 'pattern': '^$',
+                'minlength':10,
+                'maxlength':10,
+                'placeholder': 'Ingrese su telefono',
+                'title': 'Necesitas definir una contraseña segura',
+                'required': True
+            }
+        )
+    )
     password1 = forms.CharField(
         label='Contraseña',
         widget = forms.PasswordInput(
             attrs = {
                 'class': 'form-input',
-                'pattern': '^$',
+                # 'pattern': '^$',
+                'placeholder': 'Ingrese su contraseña',
+                'title': 'Necesitas definir una contraseña segura',
+                'required': True
+            }
+        )
+    )
+
+    password2 = forms.CharField(
+        label='Contraseña 2',
+        widget = forms.PasswordInput(
+            attrs = {
+                'class': 'form-input',
+                # 'pattern': '^$',
                 'placeholder': 'Ingrese su contraseña',
                 'title': 'Necesitas definir una contraseña segura',
                 'required': True
@@ -32,7 +73,8 @@ class CustomUserCreationForm(UserCreationForm):
                     'pattern': '^[a-zA-Z0-9]+@utez\.edu\.mx$',
                     'title': 'Debes ingresar un correo válido de la utez'
                 }
-            )
+            ),
+            
         }
 
 
