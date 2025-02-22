@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-qf52=xpr+1#vbe5-w-q3u+@-je0ddllr_eno9ovwl2jvx-n#v2
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '127.0.0.1','localhost',
+    '*',
 ]
 
 
@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app',
     'users',
-    'productos'
+    'productos',
+    'categorias'
 ]
 
 MIDDLEWARE = [

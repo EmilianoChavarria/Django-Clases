@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Lista de categorias con promesa</h1>
+    <div id="productos" style="display: flex; flex-direction: column;">
+
+    </div>
+    <script>
+
+const fetchData = async () => {
+    let productosDiv = document.getElementById('productos');
+    try {
+        const result = await fetch('http://127.0.0.1:8000/categorias/json', {
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+
+        const text = await result.text(); // Obtener respuesta como texto
+        console.log("Respuesta del servidor:", text);
+
+        const objeto = JSON.parse(text); // Intentar convertir a JSON
+        objeto.forEach(element => {
+            productosDiv.innerHTML += `<span>${element.nombre}</span>
+            <img src="${element.imagen}" alt="" style="height: 100px; width: 300px">`
+        });
+    } catch (error) {
+        console.log("Error:", error);
+    }
+}
+fetchData();
+
+
+    </script>
+</body>
+
+</html>

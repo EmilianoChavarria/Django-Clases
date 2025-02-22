@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="col">
+            <div class="row">
+                <h1>Agregar producto</h1>
+                <form method="post" id="productoForm">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit">Agregar</button>
+
+                </form>
+
+                <p id="mensaje"></p>
+
+                <a href="{%url 'ver'%}">volver</a>
+            </div>
+            <div class="row">
+                <div id="productos">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        var form = document.getElementById('productoForm');
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+
+            var jsonData = {};
+            formData.forEach((value, key) => {
+                jsonData[key] = value;
+            });
+
+
+
+            fetch('/productos/api/post', {
+                method: 'POST',
+                body: JSON.stringify(jsonData),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getToken()
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('menasje').innerHTML = data.mensaje;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+
+
+        });
+
+        function getToken() {
+            let cookieValue = null;
+            let cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.startsWith('csrftoken=')) {
+                    cookieValue = cookie.substring('csrftoken='.length, cookie.length);
+                    break;
+                }
+
+            }
+            return cookieValue;
+        }
+    </script>
+
+    <script>
+
+        const fetchData = async () => {
+            let productosDiv = document.getElementById('productos');
+            try {
+                const result = await fetch('http://127.0.0.1:8000/productos/api/get/');
+                const objeto = await result.json();
+                objeto.forEach(element => {
+                    productosDiv.innerHTML += `<div class="col-3">${element.nombre}</div>
+                <div>${element.precio}</div>
+                <img src="${element.imagen}" alt="" style="height: 100px; width: 300px">`
+                    console.log(element)
+                });
+
+            } catch (error) {
+                console.log(error)
+            }
+
+            // console.log(objeto);
+        }
+        fetchData()
+
+    </script>
+
+</body>
+
+</html>
