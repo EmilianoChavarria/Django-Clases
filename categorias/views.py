@@ -1,36 +1,62 @@
 from django.shortcuts import render, redirect
+from .forms import categoriaForm
 from .models import Categoria
 from django.http import JsonResponse
-from .forms import categoriaForms
 
 
 # Create your views here.
-def lista_categorias(request):
-    #Obtener todos los objetos de productos de la base de datos
-    categorias = Categoria.objects.all();
-    #Guardar los datos en un diccionario
-    data = [
-        {
-            'nombre': p.nombre,
-            'imagen': p.imagen
-        }
-        for p in categorias
-            
-    ]
-    
-    return JsonResponse(data, safe = False)
-
-def ver_categorias(request):
-    categorias = Categoria.objects.all()
-    return render(request, 'verCat.html', {'categorias': categorias})
-
-
-def agregar_categorias(request):
-    if request.method == 'POST':
-        form = categoriaForms(request.POST)
+def agregar_categoria(request):
+    if request.method == "POST":
+        form = categoriaForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('verCat')
-    else:
-        form = categoriaForms()
-    return render(request, 'agregarCat.html', {'form': form})
+            return redirect("jsonCategorias")
+    form = categoriaForm()
+    return render(request, "registrarCategoria.html", {"form": form})
+
+
+def get_categorias_json(request):
+    categorias = Categoria.objects.all()
+
+    json = [
+        {
+            "nombre": c.nombre,
+            "imagen": c.imagen,
+        }
+        for c in categorias
+    ]
+    return JsonResponse(json, safe=False)
+
+
+# Renderizar la vista de JSON
+def json_view(request):
+    return render(request, 'jsonCategorias.html')
+
+
+import json
+#Función que agrega un producto con un objeto JSON
+def registrar_categoria(request):
+    #Checa si muestra request es de tipo POST
+    if request.method == 'POST':
+        #quiere decir que si estoy manejando el request
+        try:
+            data = json.loads(request.body) #Parametro es un texto que debería ser un JSON
+            categoria = Categoria.objects.create(
+                nombre = data['nombre'],
+                imagen = data['imagen']
+            ) #Create directamente mete el objeto en la BD
+            return JsonResponse(
+                {
+                    'mensaje': 'Registro exitoso',
+                    'id': categoria.id    
+                }, status=201
+            )
+        except Exception as e:
+            print(str(e))
+            return JsonResponse(
+                {'error': str(e)}, status = 400
+            )
+    #Si no es POST el request...
+    return JsonResponse (
+        {'error': 'El método no es soportado'}, status = 405
+    )
